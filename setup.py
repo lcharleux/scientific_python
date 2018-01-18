@@ -1,7 +1,8 @@
 from setuptools import setup
 
+
 setup(name='scientific_python',
-      version=argiope.__version__,
+      version="0.0",
       description="Science oriented python",
       long_description="",
       author='Ludovic Charleux, Emile Roux',
