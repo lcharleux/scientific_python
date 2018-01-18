@@ -1,4 +1,4 @@
-makedoc/
+doc/notebooks_rst/*
 *~
 *.pyc
 doc/_build/*
