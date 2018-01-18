@@ -1,5 +1,4 @@
 from setuptools import setup
-import argiope
 
 setup(name='scientific_python',
       version=argiope.__version__,
