@@ -19,6 +19,7 @@ for dirpath, dirnames, filenames in os.walk(nbdir):
   dirnames[:] = [dirname
                  for dirname in dirnames
                  if not dirname.startswith(exclude_prefixes)]
+  dirnames = sorted(dirnames)               
   filenames = [f for f in filenames if f.endswith(file_suffixes)]
   path_depth = len(dirpath.strip("./").strip("/").split("/")) 
   rst_path = dirpath.replace(nbdir, rstdir) 
@@ -81,6 +82,7 @@ master_doc = 'index'
 # General information about the project.
 project = u"Scientific Python: a collection of science oriented python examples"
 copyright = u'2018, Ludovic Charleux, Emile Roux'
+show_authors = True
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
