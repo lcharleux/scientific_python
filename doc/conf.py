@@ -26,7 +26,12 @@ for dirpath, dirnames, filenames in os.walk(nbdir):
   if rst_path.endswith("/") == False: rst_path += "/"
   if os.path.isdir(rst_path) == False: os.mkdir(rst_path)
   node = dirpath.strip("/").split("/")[-1]
-  node_index = template.substitute(title = node.replace("_", " ").title(), 
+  node_title = node.split("_")
+  if len(node_title) > 1:
+    node_title = " ".join(node_title[1:])
+  else:
+    node_title = node_title[0] 
+  node_index = template.substitute(title = node_title.title(), 
                                    underline = 80*title_levels[path_depth])
   for d in dirnames: 
     node_index += "   " + d + "/" + d + "\n"
@@ -65,7 +70,19 @@ extensions = ['sphinx.ext.autodoc',
 'sphinx.ext.doctest',
 'matplotlib.sphinxext.only_directives',
 'matplotlib.sphinxext.plot_directive',
+#'sphinx_gallery.gen_gallery'
 ]
+
+"""
+# LC 2018/01/26
+# SPHINX GALLERY CONFIG
+sphinx_gallery_conf = {
+# path to your examples scripts
+'examples_dirs' : 'examples',
+# path where to save gallery generated examples
+'gallery_dirs'  : 'auto_examples',
+'backreferences_dir': False}
+"""
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
