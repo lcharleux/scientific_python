@@ -128,3 +128,12 @@ doctest:
 	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
 	@echo "Testing of doctests in the sources finished, look at the " \
 	      "results in $(BUILDDIR)/doctest/output.txt."
+	      
+#clean:
+#	rm -rf $(BUILDDIR)/*
+#	rm -rf auto_examples/
+
+#html-noplot:
+#	$(SPHINXBUILD) -D plot_gallery=0 -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+#	@echo
+#	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."      
