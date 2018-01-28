@@ -33,8 +33,7 @@ for dirpath, dirnames, filenames in os.walk(nbdir):
     node_title = node_title[0] 
   node_index = template.substitute(title = node_title.title(), 
                                    underline = 80*title_levels[path_depth])
-  for d in dirnames: 
-    node_index += "   " + d + "/" + d + "\n"
+  
   for f in filenames:
     nb = f[:-6]
     rst_back_path = "/".join([".."]*len(dirpath.strip(
@@ -52,6 +51,8 @@ for dirpath, dirnames, filenames in os.walk(nbdir):
     #rst += ".. contents::\n   :depth: 2\n"
     rst += open(nb_rst_path).read()
     open(nb_rst_path, "w").write(rst)
+  for d in dirnames: 
+    node_index += "   " + d + "/" + d + "\n"
   open(rst_path + node + ".rst", "w").write(node_index)              
                        
 ################################################################################
