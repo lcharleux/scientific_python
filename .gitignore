@@ -10,4 +10,4 @@ doc/_build/*
 *.snm
 *.synctex.gz
 *.toc
-
+*/.ipynb_checkpoints/*
