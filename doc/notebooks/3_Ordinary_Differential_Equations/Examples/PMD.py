@@ -4,6 +4,7 @@
 ################################################################################
 import numpy as np
 from scipy import integrate, optimize
+from scipy.integrate import odeint
 
 
 def distances(P):
@@ -22,73 +23,64 @@ def distances(P):
             where = R[:,:,np.newaxis] != 0.)
     return D, R, U
 
-class PMD(object):
+class PMD:
     """
-    Point Mass Dynamics.
+    Point Mass Dynamics
     """
-    def __init__(self, m, P0, V0, force, nk = 1000):
-        n = len(m)
+    def __init__(self, m, P, V, nk = 10000):
+        n = len(P)
+        self._n = n
         self.X = np.zeros([nk, 4 * n])
         self.X.fill(np.NAN)
-        self.X[-1,    :2*n] = np.array(P0).flatten()
-        self.X[-1, 2*n:   ] = np.array(V0).flatten()
-        self.m = m
-        force.set_master(self)
-        self.force = force
+        self.X[-1, :2 * n] = np.array(P).flatten()
+        self.X[-1, 2 * n:] = np.array(V).flatten()
+        self.m  = np.array(m)
         self.nk = nk
- 
-    def derivative(self, X, t):
-        """
-        ODE 
-        """      
-        m = self.m
-        n = len(m)
-        V = self.velocities()
-        A = (self.force.master_force().T / m).T
-        X2 = X.copy()
-        X2[:2*n ] = V.flatten()
-        X2[ 2*n:] = A.flatten()
-        return X2       
+      
+    def solve(self, dt, nt):
+        time = np.linspace(0., dt, nt + 1)
+        Xs = odeint( self.derivative, self.X[-1], time)
+        nk = self.nk
+        X = self.X
+        X[:nk - nt] = X[nt:]
+        X[-nt-1:] = Xs 
+        self.X    = X
     
-    def positions(self):
+    def get_positions(self):
         """
         Returns the current positions.
         """
         n = len(self.m)
         return self.X[-1, :2 * n ].reshape(n ,2)
-  
-    def velocities(self):
+    
+    def set_positions(self, P):
+        """
+        Sets the current positions.
+        """
+        n = len(self.m)
+        self.X[-1, :2 * n ] = P.flatten()
+    
+    positions = property(get_positions, set_positions) 
+      
+    def get_velocities(self):
         """
         Returns the current velocities.
         """
         n = len(self.m)
         return  self.X[-1, 2 * n:].reshape(n ,2)
     
-    def solve(self, dt, nt, **kwargs):
-        """
-        Solves the ODE.
-        """
-        time = np.linspace(0., dt, nt + 1)
-        Xs = integrate.odeint( self.derivative, self.X[-1], time, **kwargs)
-        nk = self.nk
-        X = self.X
-        X[:nk - nt] = X[nt:]
-        X[-nt-1:] = Xs 
-        self.X    = X
-  
+    velocities = property(get_velocities) 
+     
     def xy(self):
-        """
-        Returns the position of each mass.
-        """
-        P = self.positions()
-        return P[:,0], P[:,1]
-    
+        n = self._n
+        p = self.X[-1,:2 * n].reshape(n, 2)
+        return p[:,0], p[:,1]
+        
     def trail(self, i):
-        """
-        Returns the trail of each mass.
-        """
+        n = self._n
         X = self.X
-        return X[:, 2*i], X[:, 2*i+1 ]
+        return X[:, 2*i], X[:, 2*i +1 ]
+
 
 
 class MetaForce:
@@ -102,4 +94,7 @@ class MetaForce:
         self.master = master
         
     def master_force(self):
-        return self.force(P = self.master.positions(), V = self.master.velocities())    
+        return self.force(P = self.master.positions, 
+                          V = self.master.velocities)
+    def master_potential(self):
+        return self.potential(P = self.master.positions)
