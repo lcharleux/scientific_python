@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Tutorial: The Harmonic Oscillator &mdash; Scientific Python: a collection of science oriented python examples  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Scientific Python: a collection of science oriented python examples  documentation" href="../../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Scientific Python: a collection of science oriented python examples
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks.html">Notebooks</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Scientific Python: a collection of science oriented python examples</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>Tutorial: The Harmonic Oscillator</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/notebooks_rst/3_Ordinary_Differential_Equations/ODE_tutorial.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This notebook can be downloaded here: <code class="xref download docutils literal"><span class="pre">ODE_tutorial.ipynb</span></code></p>
+</div>
+<div class="section" id="tutorial-the-harmonic-oscillator">
+<h1>Tutorial: The Harmonic Oscillator<a class="headerlink" href="#tutorial-the-harmonic-oscillator" title="Permalink to this headline">¶</a></h1>
+<p>In this example, you will simulate an harmonic oscillator and compare
+the numerical solution to the closed form one.</p>
+<div class="section" id="theory">
+<h2>Theory<a class="headerlink" href="#theory" title="Permalink to this headline">¶</a></h2>
+<p>Read about the theory of harmonic oscillators on
+<a class="reference external" href="https://en.wikipedia.org/wiki/Harmonic_oscillator">Wikipedia</a></p>
+<div class="section" id="mechanical-oscillator">
+<h3>Mechanical oscillator<a class="headerlink" href="#mechanical-oscillator" title="Permalink to this headline">¶</a></h3>
+<p>The case of the one dimensional mechanical oscillator leads to the
+following equation:</p>
+<div class="math">
+\[m \ddot x + \mu \dot x + k x = m \ddot x_d\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><span class="math">\(x\)</span> is the position,</li>
+<li><span class="math">\(\dot x\)</span> and <span class="math">\(\ddot x\)</span> are respectively the speed and
+acceleration,</li>
+<li><span class="math">\(m\)</span> is the mass,</li>
+<li><span class="math">\(\mu\)</span> the</li>
+<li><span class="math">\(k\)</span> the stiffness,</li>
+<li>and <span class="math">\(\ddot x_d\)</span> the driving acceleration which is null if the
+oscillator is free.</li>
+</ul>
+</div>
+<div class="section" id="canonical-equation">
+<h3>Canonical equation<a class="headerlink" href="#canonical-equation" title="Permalink to this headline">¶</a></h3>
+<p>Most 1D oscilators follow the same canonical equation:</p>
+<div class="math">
+\[\ddot x + 2 \zeta \omega_0 \dot x + \omega_0^2 x = \ddot x_d\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><span class="math">\(\omega_0\)</span> is the undamped pulsation,</li>
+<li><span class="math">\(\zeta\)</span> is damping ratio,</li>
+<li><span class="math">\(\ddot x_d\)</span> is the imposed acceleration.</li>
+</ul>
+<p>In the case of the mechanical oscillator:</p>
+<div class="math">
+\[\omega_0 = \sqrt{\dfrac{k}{m}}\]</div>
+<div class="math">
+\[\zeta = \dfrac{\mu}{2\sqrt{mk}}\]</div>
+<p>###&nbsp;Undampened oscillator</p>
+<p>First, you will focus on the case of an undamped free oscillator
+(<span class="math">\(\zeta = 0\)</span>, <span class="math">\(\ddot x_d = 0\)</span>) with the following initial
+conditions:</p>
+<div class="math">
+\[\begin{split}\left \lbrace
+\begin{split}
+x(t = 0) = 1 \\
+\dot x(t = 0) = 0
+\end{split}\right.\end{split}\]</div>
+<p>The closed form solution is:</p>
+<div class="math">
+\[x(t) = a\cos \omega_0 t\]</div>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Setup</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="k">import</span> <span class="n">odeint</span>
+
+<span class="c1"># Setup</span>
+<span class="n">f0</span>     <span class="o">=</span> <span class="mf">1.</span>
+<span class="n">omega0</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">f0</span>
+<span class="n">a</span>      <span class="o">=</span> <span class="mf">1.</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="part-1-theoretical-solution">
+<h2>Part 1: theoretical solution<a class="headerlink" href="#part-1-theoretical-solution" title="Permalink to this headline">¶</a></h2>
+<p>Plot the closed form solution of the undamped free oscillator for 5
+periods.</p>
+<p>Steps:</p>
+<ol class="arabic simple">
+<li>Create an array <span class="math">\(t\)</span> reprenting time,</li>
+<li>Create a function <span class="math">\(x_{th}\)</span> representing the amplitude of the
+closed form solution,</li>
+<li>Plot <span class="math">\(x_{th}\)</span> vs <span class="math">\(t\)</span>.</li>
+</ol>
+<div class="code ipython3 highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Complete here</span>
+<span class="c1">#t =</span>
+<span class="c1">#xth =</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="part-2-numerical-solution-with-euler-integrator">
+<h2>Part 2: Numerical solution with Euler integrator<a class="headerlink" href="#part-2-numerical-solution-with-euler-integrator" title="Permalink to this headline">¶</a></h2>
+<p>Solve the problem introduced in question 1 with the Euler integrator.</p>
+<p>Steps:</p>
+<ol class="arabic simple">
+<li>Rewrite the canonical equation as a system of first order ODEs
+depending of the variable <span class="math">\(X = [x, \dot x]\)</span>,</li>
+<li>Code the derivative function <span class="math">\(f(X,t) = \dot X\)</span>,</li>
+<li>Define initial conditions <span class="math">\(X_0\)</span>,</li>
+<li>Solve the problem.</li>
+<li>Plot the position <span class="math">\(x\)</span> along and compare it with the theoretical
+solution.</li>
+</ol>
+</div>
+<div class="section" id="part-3-energies-an-errors">
+<h2>Part 3: Energies an errors<a class="headerlink" href="#part-3-energies-an-errors" title="Permalink to this headline">¶</a></h2>
+<p>Calculate and plot the kinetic energy <span class="math">\(E_c\)</span>, the potential energy
+<span class="math">\(E_p\)</span> and the total energy <span class="math">\(E_t = E_c + E_p\)</span>, comment the
+result.</p>
+<p>Steps:</p>
+<ol class="arabic simple">
+<li>Calculate <span class="math">\(E_c\)</span>,</li>
+<li>Calculate <span class="math">\(E_p\)</span>,</li>
+<li>Calculate <span class="math">\(E_t\)</span>,</li>
+<li>Plot the evolution of the 3 energies. You can use <em>plt.fill_between</em>
+instead of <em>plt.plot</em>,</li>
+<li>Use the results to define a relative error estimator base on
+energies.</li>
+</ol>
+</div>
+<div class="section" id="part-4-numerical-solution-convergence">
+<h2>Part 4: Numerical solution convergence<a class="headerlink" href="#part-4-numerical-solution-convergence" title="Permalink to this headline">¶</a></h2>
+<p>Plot the effect of the number time steps <span class="math">\(n_t\)</span> on the error
+<span class="math">\(e\)</span>.</p>
+<p>Steps:</p>
+<ol class="arabic simple">
+<li>Create an array containing the different number of time steps from
+100 to 100000,</li>
+<li>Loop over this array and calculate the the error for each
+configuration,</li>
+<li>Plot the error as a function of <span class="math">\(n_t\)</span>.</li>
+</ol>
+</div>
+<div class="section" id="part-5-integrator-benchmark">
+<h2>Part 5: integrator benchmark<a class="headerlink" href="#part-5-integrator-benchmark" title="Permalink to this headline">¶</a></h2>
+<p>Rewrite the code of part 4 in order to compare the RK4 and ODEint
+solvers with the Euler solver. Comment the efficiency of each solver.</p>
+</div>
+<div class="section" id="part-6-error-vs-time">
+<h2>Part 6: Error <em>vs.</em> time<a class="headerlink" href="#part-6-error-vs-time" title="Permalink to this headline">¶</a></h2>
+<p>Modify the code of part 5 in order to measure the computing time of each
+method in each case. Plot the error <em>vs.</em> the computing time.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

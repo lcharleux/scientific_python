@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, shutil
 from string import Template
 import subprocess
 sys.path.append(os.path.abspath('sphinxext'))
@@ -7,53 +7,81 @@ sys.path.append(os.path.abspath('sphinxext'))
 # NOTEBOOKS MANAGEMENT
 ################################################################################
 # SETUP
-nbdir  = "./notebooks/" # The notebooks that contains the notebooks.
+nbdir  = "./notebooks/"     # The notebooks that contains the notebooks.
 rstdir = "./notebooks_rst/" # The directory where sphinx can store rst files.
 template = Template(open("notebooks_index.template").read())
-exclude_prefixes = ('_', '.')  # exclusion prefixes
-file_suffixes = (".ipynb",)
+exclude_prefixes = ('_', '.')  # exclusion prefixes for files and folders
 title_levels = "+=~-_"
+
+
+nbdir = nbdir.strip("./")
+rstdir = rstdir.strip("./")
 
 # DATA PROCESSING (whole section needs serious cleaning)
 for dirpath, dirnames, filenames in os.walk(nbdir):
-  dirnames[:] = [dirname
-                 for dirname in dirnames
-                 if not dirname.startswith(exclude_prefixes)]
-  dirnames = sorted(dirnames)               
-  filenames = [f for f in filenames if f.endswith(file_suffixes)]
-  path_depth = len(dirpath.strip("./").strip("/").split("/")) 
-  rst_path = dirpath.replace(nbdir, rstdir) 
-  if rst_path.endswith("/") == False: rst_path += "/"
-  if os.path.isdir(rst_path) == False: os.mkdir(rst_path)
-  node = dirpath.strip("/").split("/")[-1]
-  node_title = node.split("_")
-  if len(node_title) > 1:
-    node_title = " ".join(node_title[1:])
-  else:
-    node_title = node_title[0] 
-  node_index = template.substitute(title = node_title.title(), 
-                                   underline = 80*title_levels[path_depth])
-  
-  for f in filenames:
-    nb = f[:-6]
-    rst_back_path = "/".join([".."]*len(dirpath.strip(
-                    "./").strip("/").split("/"))) + "/"
-    nb_rst_path = ( rst_path.strip("/").strip("./")) +"/"+ nb +".rst"
-    node_index += "   " + nb + "\n"
+    dirnames[:] = sorted([dirname for dirname in dirnames
+                   if not dirname.startswith(exclude_prefixes)])
+    filenames[:] = sorted([f for f in filenames 
+                   if True not in [f.startswith(ep) for ep 
+                                   in exclude_prefixes]])
+    print("DIR PATH: ", dirpath)
+    print("  DIR NAMES: ", dirnames)
+    print("  DIR FILENAMES: ", filenames)
     
-    os.system("jupyter-nbconvert {0}/{1}.ipynb --to rst --output {2}".format(
-          dirpath, nb, rst_back_path+nb_rst_path))
+    # PATH MANAGEMENT
+    dirpath = dirpath.strip("./")
+    pathdepth = len(dirpath.strip("/").split("/")) 
+    rstpath   = dirpath.replace(nbdir, rstdir).strip("/").strip("./") + "/"
+    rootpath  = "/".join([".."] * pathdepth) + "/"
+    if os.path.isdir(rstpath) == False: 
+        os.mkdir(rstpath)
+    node = dirpath.strip("/").split("/")[-1]
     
-    rst = ""
-    rst += ".. Note::\n\n  This notebook can be downloaded here: "
-    rst += ":download:`{2}.ipynb <{0}{1}/{2}.ipynb>` \n\n".format(
-             rst_back_path, dirpath.strip("./"), nb)
-    #rst += ".. contents::\n   :depth: 2\n"
-    rst += open(nb_rst_path).read()
-    open(nb_rst_path, "w").write(rst)
-  for d in dirnames: 
-    node_index += "   " + d + "/" + d + "\n"
-  open(rst_path + node + ".rst", "w").write(node_index)              
+    # TITLE
+    nodetitle = node.split("_")
+    if len(nodetitle) > 1: 
+        nodetitle = " ".join(nodetitle[1:])
+    else:
+        nodetitle = nodetitle[0] 
+    print("  TITLE: ", nodetitle) 
+    otherfiles = []
+    notebooks  = []
+    
+    for f in filenames:
+        if f.endswith(".ipynb"): # NOTEBOOKS
+            # NOTEBOOK NAME
+            nb = f[:-6]
+            notebooks.append(nb)
+            # RST CONVERSION
+            nbrstpath = rstpath + nb +".rst" # WARNING: NBCONVERT WORKS IN NOTEBOOK DIR, NOT IN CURRENT DIR
+            rstconvertcommand = "jupyter-nbconvert {0}/{1}.ipynb --to rst --output {2}"
+            os.system(rstconvertcommand.format(dirpath, nb, rootpath + nbrstpath))
+            rst  = ".. Note::\n\n  This notebook can be downloaded here: "
+            rst += ":download:`{2}.ipynb <{0}{1}/{2}.ipynb>` \n\n".format(
+                     rootpath, dirpath, nb)
+            rst += open(nbrstpath).read()
+            open(nbrstpath, "w").write(rst)
+            
+          
+        else: # OTHER FILES
+            otherfiles.append(f)
+    downloadtemplate = "#. :download:`{0}<{1}>`"
+    files = ""
+    if len(otherfiles)!= 0:
+        files = "Files in this folder:\n\n" 
+        downloadlinks = [
+            downloadtemplate.format(f, rootpath + dirpath + "/" + f) 
+            for f in otherfiles ]
+        files += "\n".join(downloadlinks)                       
+    
+    nodeindex = template.substitute(
+                         title = nodetitle.title(), 
+                         underline = 80 * title_levels[pathdepth],
+                         files = files)      
+    nodeindex += "\n".join(["   " + nb for nb in notebooks]) 
+    for d in dirnames: nodeindex += "   " + d + "/" + d + "\n"
+    open(rstpath + node + ".rst", "w").write(nodeindex)
+                 
                        
 ################################################################################
 

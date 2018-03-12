@@ -1,0 +1,556 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2D Interpolation (and above) &mdash; Scientific Python: a collection of science oriented python examples  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Scientific Python: a collection of science oriented python examples  documentation" href="../../index.html"/>
+        <link rel="up" title="Interpolation" href="1_Interpolation.html"/>
+        <link rel="next" title="Data Analysis" href="../2_Data_Analysis/2_Data_Analysis.html"/>
+        <link rel="prev" title="1D interpolation" href="1D_interpolation.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Scientific Python: a collection of science oriented python examples
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../notebooks.html">Notebooks</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../0_Python/0_Python.html">Python</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="1_Interpolation.html">Interpolation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="1D_interpolation.html">1D interpolation</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2D Interpolation (and above)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#scope">Scope</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lets-do-it-with-python">Let’s do it with Python</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#neighbours-and-connectivity-delaunay-mesh">Neighbours and connectivity: Delaunay mesh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nearest-interpolation">Nearest interpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#linear-interpolation">Linear interpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#higher-order-interpolation">Higher order interpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#comparison-discussion">Comparison / Discussion</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../2_Data_Analysis/2_Data_Analysis.html">Data Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Ordinary_Differential_Equations/3_Ordinary_Differential_Equations.html">Ordinary Differential Equations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5_Image_Processing/5_Image_Processing.html">Image Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5_Optimization/5_Optimization.html">Optimization</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Scientific Python: a collection of science oriented python examples</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../notebooks.html">Notebooks</a> &raquo;</li>
+        
+          <li><a href="1_Interpolation.html">Interpolation</a> &raquo;</li>
+        
+      <li>2D Interpolation (and above)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/notebooks_rst/1_Interpolation/2D_Interpolation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This notebook can be downloaded here: <a class="reference download internal" href="../../_downloads/2D_Interpolation.ipynb" download=""><code class="xref download docutils literal"><span class="pre">2D_Interpolation.ipynb</span></code></a></p>
+</div>
+<div class="code ipython2 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">HTML</span>
+<span class="k">def</span> <span class="nf">css_styling</span><span class="p">():</span>
+    <span class="n">styles</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;styles/custom.css&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">HTML</span><span class="p">(</span><span class="n">styles</span><span class="p">)</span>
+<span class="n">css_styling</span><span class="p">()</span>
+</pre></div>
+</div>
+<link href='http://fonts.googleapis.com/css?family=Fenix' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Alegreya+Sans:100,300,400,500,700,800,900,100italic,300italic,400italic,500italic,700italic,800italic,900italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:300,400' rel='stylesheet' type='text/css'>
+<style>
+
+@font-face {
+    font-family: "Computer Modern";
+    src: url('http://mirrors.ctan.org/fonts/cm-unicode/fonts/otf/cmunss.otf');
+}
+
+
+#notebook_panel { /* main background */
+    background: rgb(245,245,245);
+}
+
+div.cell { /* set cell width */
+    width: 750px;
+}
+
+div #notebook { /* centre the content */
+    background: #fff; /* white background for content */
+    width: 1000px;
+    margin: auto;
+    padding-left: 0em;
+}
+
+#notebook li { /* More space between bullet points */
+margin-top:0.8em;
+}
+
+/* draw border around running cells */
+div.cell.border-box-sizing.code_cell.running {
+    border: 1px solid #111;
+}
+
+/* Put a solid color box around each cell and its output, visually linking them*/
+div.cell.code_cell {
+    background-color: rgb(256,256,256);
+    border-radius: 0px;
+    padding: 0.5em;
+    margin-left:1em;
+    margin-top: 1em;
+}
+
+
+div.text_cell_render{
+    font-family: 'Alegreya Sans' sans-serif;
+    line-height: 140%;
+    font-size: 125%;
+    font-weight: 400;
+    width:600px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+/* Formatting for header cells */
+.text_cell_render h1 {
+    font-family: 'Alegreya Sans', sans-serif;
+    font-style:regular;
+    font-weight: 200;
+    font-size: 50pt;
+    line-height: 100%;
+    color:#CD2305;
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+    display: block;
+}
+.text_cell_render h2 {
+    font-family: 'Fenix', serif;
+    font-size: 22pt;
+    line-height: 100%;
+    margin-bottom: 0.1em;
+    margin-top: 0.3em;
+    display: block;
+}
+
+.text_cell_render h3 {
+    font-family: 'Fenix', serif;
+    margin-top:12px;
+    font-size: 16pt;
+    margin-bottom: 3px;
+    font-style: regular;
+}
+
+.text_cell_render h4 {    /*Use this for captions*/
+    font-family: 'Fenix', serif;
+    font-size: 2pt;
+    text-align: center;
+    margin-top: 0em;
+    margin-bottom: 2em;
+    font-style: regular;
+}
+
+.text_cell_render h5 {  /*Use this for small titles*/
+    font-family: 'Alegreya Sans', sans-serif;
+    font-weight: 300;
+    font-size: 16pt;
+    color: #CD2305;
+    font-style: italic;
+    margin-bottom: .5em;
+    margin-top: 0.5em;
+    display: block;
+}
+
+.text_cell_render h6 { /*use this for copyright note*/
+    font-family: 'Source Code Pro', sans-serif;
+    font-weight: 300;
+    font-size: 9pt;
+    line-height: 100%;
+    color: grey;
+    margin-bottom: 1px;
+    margin-top: 1px;
+}
+
+    .CodeMirror{
+            font-family: "Source Code Pro";
+                    font-size: 90%;
+    }
+/*    .prompt{
+        display: None;
+    }*/
+
+
+    .warning{
+        color: rgb( 240, 20, 20 )
+        }
+</style>
+<script>
+    MathJax.Hub.Config({
+                        TeX: {
+                           extensions: ["AMSmath.js"],
+                           equationNumbers: { autoNumber: "AMS", useLabelIds: true}
+                           },
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+                },
+                displayAlign: 'center', // Change this to 'center' to center equations.
+                "HTML-CSS": {
+                    styles: {'.MathJax_Display': {"margin": 4}}
+                }
+        });
+</script><div class="section" id="d-interpolation-and-above">
+<h1>2D Interpolation (and above)<a class="headerlink" href="#d-interpolation-and-above" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="scope">
+<h2>Scope<a class="headerlink" href="#scope" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Finite number <span class="math">\(N\)</span> of data points are available:
+<span class="math">\(P_i = (x_i, y_i)\)</span> and associated values <span class="math">\(z_i\)</span> ,
+<span class="math">\(i \in \lbrace 0, \ldots, N \rbrace\)</span></li>
+<li>ND interpolation differs from 1D interpolation because the notion of
+neighbourhood is less obvious.</li>
+</ul>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Interpolation">https://en.wikipedia.org/wiki/Interpolation</a></p>
+<div class="code ipython2 highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Setup</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;font.size&#39;</span>     <span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+          <span class="s1">&#39;figure.figsize&#39;</span><span class="p">:(</span><span class="mf">15.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">),</span>
+          <span class="s1">&#39;lines.linewidth&#39;</span><span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+          <span class="s1">&#39;lines.markersize&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,}</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="lets-do-it-with-python">
+<h2>Let’s do it with Python<a class="headerlink" href="#lets-do-it-with-python" title="Permalink to this headline">¶</a></h2>
+<div class="code ipython2 highlight-default"><div class="highlight"><pre><span></span><span class="n">Ni</span> <span class="o">=</span> <span class="mi">40</span>
+<span class="n">Pi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">Ni</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">Xi</span><span class="p">,</span> <span class="n">Yi</span> <span class="o">=</span> <span class="n">Pi</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">Pi</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">Zi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">Ni</span><span class="p">)</span>
+
+
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="k">import</span> <span class="n">Axes3D</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Xi</span><span class="p">,</span> <span class="n">Yi</span><span class="p">,</span> <span class="n">Zi</span><span class="p">,</span> <span class="s2">&quot;or&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Data&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../../_images/2D_Interpolation_4_0.png" src="../../_images/2D_Interpolation_4_0.png" />
+</div>
+<div class="section" id="neighbours-and-connectivity-delaunay-mesh">
+<h2>Neighbours and connectivity: Delaunay mesh<a class="headerlink" href="#neighbours-and-connectivity-delaunay-mesh" title="Permalink to this headline">¶</a></h2>
+<p>Triangular mesh over a convex domain</p>
+<div class="code ipython2 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="k">import</span> <span class="n">Delaunay</span>
+<span class="n">Pi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Xi</span><span class="p">,</span> <span class="n">Yi</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="n">tri</span> <span class="o">=</span> <span class="n">Delaunay</span><span class="p">(</span><span class="n">Pi</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">triplot</span><span class="p">(</span><span class="n">Xi</span><span class="p">,</span> <span class="n">Yi</span> <span class="p">,</span> <span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Xi</span><span class="p">,</span> <span class="n">Yi</span><span class="p">,</span> <span class="s2">&quot;or&quot;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../../_images/2D_Interpolation_6_0.png" src="../../_images/2D_Interpolation_6_0.png" />
+<p>## Interpolation</p>
+<div class="code ipython2 highlight-default"><div class="highlight"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">X</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Xi</span><span class="p">,</span> <span class="n">Yi</span><span class="p">,</span> <span class="s2">&quot;or&quot;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">triplot</span><span class="p">(</span><span class="n">Xi</span><span class="p">,</span> <span class="n">Yi</span> <span class="p">,</span> <span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="s2">&quot;g,&quot;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Z = ?&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../../_images/2D_Interpolation_8_0.png" src="../../_images/2D_Interpolation_8_0.png" />
+</div>
+<div class="section" id="nearest-interpolation">
+<h2>Nearest interpolation<a class="headerlink" href="#nearest-interpolation" title="Permalink to this headline">¶</a></h2>
+<div class="code ipython2 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">griddata</span>
+<span class="n">Z_nearest</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">(</span><span class="n">Pi</span><span class="p">,</span> <span class="n">Zi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z_nearest</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Xi</span><span class="p">,</span> <span class="n">Yi</span><span class="p">,</span> <span class="s2">&quot;or&quot;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../../_images/2D_Interpolation_11_0.png" src="../../_images/2D_Interpolation_11_0.png" />
+</div>
+<div class="section" id="linear-interpolation">
+<h2>Linear interpolation<a class="headerlink" href="#linear-interpolation" title="Permalink to this headline">¶</a></h2>
+<div class="code ipython2 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">griddata</span>
+<span class="n">Z_linear</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">(</span><span class="n">Pi</span><span class="p">,</span> <span class="n">Zi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;linear&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z_linear</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">jet</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z_linear</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">colors</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="c1">#plt.triplot(Xi, Yi , tri.simplices.copy(), color = &quot;k&quot;)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Xi</span><span class="p">,</span> <span class="n">Yi</span><span class="p">,</span> <span class="s2">&quot;or&quot;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../../_images/2D_Interpolation_13_0.png" src="../../_images/2D_Interpolation_13_0.png" />
+</div>
+<div class="section" id="higher-order-interpolation">
+<h2>Higher order interpolation<a class="headerlink" href="#higher-order-interpolation" title="Permalink to this headline">¶</a></h2>
+<div class="code ipython2 highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">griddata</span>
+<span class="n">Z_cubic</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">(</span><span class="n">Pi</span><span class="p">,</span> <span class="n">Zi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;cubic&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z_cubic</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">jet</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z_cubic</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">colors</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="c1">#plt.triplot(Xi, Yi , tri.simplices.copy(), color = &quot;k&quot;)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Xi</span><span class="p">,</span> <span class="n">Yi</span><span class="p">,</span> <span class="s2">&quot;or&quot;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../../_images/2D_Interpolation_15_0.png" src="../../_images/2D_Interpolation_15_0.png" />
+</div>
+<div class="section" id="comparison-discussion">
+<h2>Comparison / Discussion<a class="headerlink" href="#comparison-discussion" title="Permalink to this headline">¶</a></h2>
+<div class="code ipython2 highlight-default"><div class="highlight"><pre><span></span><span class="n">levels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span>  <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z_nearest</span><span class="p">,</span> <span class="n">levels</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span>  <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z_linear</span><span class="p">,</span> <span class="n">levels</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span>  <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z_cubic</span><span class="p">,</span> <span class="n">levels</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../../_images/2D_Interpolation_17_0.png" src="../../_images/2D_Interpolation_17_0.png" />
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../2_Data_Analysis/2_Data_Analysis.html" class="btn btn-neutral float-right" title="Data Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="1D_interpolation.html" class="btn btn-neutral" title="1D interpolation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
