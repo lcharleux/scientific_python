@@ -1,0 +1,13 @@
+*.log
+*.pyc
+*~
+*.dat
+*.msg
+*__pycache__*
+doc/_build/*
+doc/notebooks_rst/*
+dist/*
+build/*
+argiope.egg-info/*
+*.ipynb_checkpoints/*
+
