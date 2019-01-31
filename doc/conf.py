@@ -78,7 +78,7 @@ for dirpath, dirnames, filenames in os.walk(nbdir):
                          title = nodetitle.title(), 
                          underline = 80 * title_levels[pathdepth],
                          files = files)      
-    nodeindex += "\n".join(["   " + nb for nb in notebooks]) 
+    nodeindex += "\n".join(["   " + nb for nb in notebooks]) + "\n"
     for d in dirnames: nodeindex += "   " + d + "/" + d + "\n"
     open(rstpath + node + ".rst", "w").write(nodeindex)
                  
