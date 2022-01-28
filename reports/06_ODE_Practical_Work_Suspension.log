@@ -1,0 +1,52 @@
+Traceback (most recent call last):
+  File "/home/ludch/miniconda3/envs/jupyter_book/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 51, in single_nb_execution
+    executenb(
+  File "/home/ludch/miniconda3/envs/jupyter_book/lib/python3.10/site-packages/nbclient/client.py", line 1085, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/home/ludch/miniconda3/envs/jupyter_book/lib/python3.10/site-packages/nbclient/util.py", line 84, in wrapped
+    return just_run(coro(*args, **kwargs))
+  File "/home/ludch/miniconda3/envs/jupyter_book/lib/python3.10/site-packages/nbclient/util.py", line 62, in just_run
+    return loop.run_until_complete(coro)
+  File "/home/ludch/miniconda3/envs/jupyter_book/lib/python3.10/asyncio/base_events.py", line 641, in run_until_complete
+    return future.result()
+  File "/home/ludch/miniconda3/envs/jupyter_book/lib/python3.10/site-packages/nbclient/client.py", line 551, in async_execute
+    await self.async_execute_cell(
+  File "/home/ludch/miniconda3/envs/jupyter_book/lib/python3.10/site-packages/nbclient/client.py", line 846, in async_execute_cell
+    self._check_raise_for_error(cell, exec_reply)
+  File "/home/ludch/miniconda3/envs/jupyter_book/lib/python3.10/site-packages/nbclient/client.py", line 748, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+dx1 = d.x1 - s.xd(d.t)
+dx2 = d.x2 - d.x1 
+d = s.solution
+fig = plt.figure()
+ax = fig.add_subplot(2,1,1)
+plt.plot(d.t, d.x1, label = "x1")
+plt.plot(d.t, d.x2, label = "x2")
+plt.plot(d.t, s.xd(d.t), label = "xd")
+plt.grid()
+plt.xlabel("Time, $t$ [s]")
+plt.ylabel("Positions, $x$ [m]")
+plt.legend()
+ax = fig.add_subplot(2,1,2)
+plt.plot(dx1 , label = "dx1")
+plt.plot(dx2, label = "dx2")
+plt.grid()
+plt.xlabel("Time, $t$ [s]")
+plt.ylabel("Displacements, $dx$ [m]")
+plt.legend()
+
+plt.show()
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mAttributeError[0m                            Traceback (most recent call last)
+Input [0;32mIn [5][0m, in [0;36m<module>[0;34m[0m
+[0;32m----> 1[0m dx1 [38;5;241m=[39m [43md[49m[38;5;241;43m.[39;49m[43mx1[49m [38;5;241m-[39m s[38;5;241m.[39mxd(d[38;5;241m.[39mt)
+[1;32m      2[0m dx2 [38;5;241m=[39m d[38;5;241m.[39mx2 [38;5;241m-[39m d[38;5;241m.[39mx1 
+[1;32m      3[0m d [38;5;241m=[39m s[38;5;241m.[39msolution
+
+[0;31mAttributeError[0m: 'float' object has no attribute 'x1'
+AttributeError: 'float' object has no attribute 'x1'
+
